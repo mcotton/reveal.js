@@ -111,6 +111,9 @@
 							<li>Purchased: 2000</li>
 						</ul>
 					</p>
+					<p>
+						Not practical to interface with Python.
+					</p>
 				</section>
 
 				<section>
@@ -122,6 +125,9 @@
 							<li>Ethernet and Serial</li>
 							<li>Purchased: 2004</li>
 						</ul>
+					</p>
+					<p>
+						Inexpensive enough to talk over network/serial to Python
 					</p>
 				</section>
 
@@ -135,6 +141,9 @@
 							<li>Purchased: 2008</li>
 						</ul>
 					</p>
+					<p>
+						Connect via USB, Python SDK
+					</p>
 				</section>
 
 				<section>
@@ -147,6 +156,9 @@
 							<li>Purchased: 2010</li>
 						</ul>
 					</p>
+					<p>
+						Run a limited version of Python directly.
+					</p>
 				</section>
 
 				<section>
@@ -158,6 +170,9 @@
 							<li>Amazing Community, Documentation</li>
 							<li>Purchased: 2012</li>
 						</ul>
+					</p>
+					<p>
+						Control Android via firmata, allows usage of Android ecosystem.
 					</p>
 				</section>
 
@@ -183,21 +198,34 @@
 							<li>Purchased: 2014</li>
 						</ul>
 					</p>
+					<p>
+						Access sensor data via URL GET /v1/devices/{DEVICE_ID}/{VARIABLE}
+					</p>
 				</section>
 
 				<section>
 					<h2>Phidgets Example</h2>
 					<pre><code data-trim contenteditable>
-#Phidget specific imports
-from Phidgets.PhidgetException import PhidgetErrorCodes, PhidgetException
-from Phidgets.Events.Events import AttachEventArgs, DetachEventArgs, ErrorEventArgs, EncoderPositionChangeEventArgs, InputChangeEventArgs
-from Phidgets.Devices.Encoder import Encoder
+from Phidgets.PhidgetException import *
+from Phidgets.Events.Events import *
+from Phidgets.Devices.InterfaceKit import *
 
-...
+device.setOnSensorChangeHandler(sensorChanged)
 
-def encoderPositionChange(e):
-		source = e.device
-		print("Encoder %i: Encoder %i -- Change: %i -- Time: %i -- Position: %i" % (source.getSerialNum(), e.index, e.positionChange, e.time, encoder.getPosition(e.index)))
+def sensorChanged(e):
+   if e.value > 0 and e.value < 301:
+     device.setOutputState(0, 1)
+     device.setOutputState(1, 0)
+     device.setOutputState(2, 0)
+   if e.value > 300 and e.value < 601:
+     device.setOutputState(0, 0)
+     device.setOutputState(1, 1)
+     device.setOutputState(2, 0)
+   if e.value > 601 and e.value < 999:
+     device.setOutputState(0, 0)
+     device.setOutputState(1, 0)
+     device.setOutputState(2, 1)
+
 					</code></pre>
 				</section>
 
@@ -243,6 +271,29 @@ def beep(length,Tone):
         x = x+1
         pulsePin(GPIO_6,Tone,True)
     setPinDir(GPIO_6,False)
+
+</code></pre>
+				</section>
+
+				<section>
+					<h2>Spark-core Example</h2>
+					<pre><code data-trim contenteditable>
+
+/* FIRMWARE */
+int temperature = 0;
+
+void setup()
+{
+  Spark.variable("temperature", &temperature, INT);
+  pinMode(A0, INPUT);
+}
+
+void loop()
+{
+  temperature = analogRead(A0);
+}
+
+curl "https://api.spark.io/v1/devices/device/temperature?access_token=token"
 
 </code></pre>
 				</section>
